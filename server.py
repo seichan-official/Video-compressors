@@ -19,24 +19,31 @@ def start_server():
         
         client_socket.settimeout(TIMEOUT)  # Set a timeout for the client
 
-        try:
-            with open('received_file.mp4', 'wb') as file:  # Open a file to save received data
-                while True:
-                    data = client_socket.recv(BUFFER_SIZE)  # Receive data in chunks
-                    if not data:  # No more data means the client closed the connection
-                        break
-                    file.write(data)  # Write data to the file
-                    print(f"Received {len(data)} bytes from {addr}")
-            
-            print(f"File received from {addr} and saved as 'received_file.mp4'")
-            client_socket.sendall(b"Data received")  # Send a response to the client
-        except socket.timeout:
-            print(f"Connection with {addr} timed out")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        finally:
-            client_socket.close()
-            print(f"Connection with {addr} closed")
+        while True:
+            client_socket, addr = s.accept()
+            print(f"Connection established with {addr}")
+
+            try:
+                file_size = int.from_bytes(client_socket.recv(4), 'big')  # 最初の32ビットを受信してファイルサイズを取得
+                print(f"Receiving file of size {file_size} bytes")
+
+                with open('received_file.mp4', 'wb') as file:
+                    total_received = 0
+                    while total_received < file_size:
+                        data = client_socket.recv(BUFFER_SIZE)
+                        if not data:
+                            break
+                        file.write(data)
+                        total_received += len(data)
+                        print(f"Received {len(data)} bytes ({total_received}/{file_size})")
+
+                print(f"File received from {addr} and saved as 'received_file.mp4'")
+                client_socket.sendall(b"Data received")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+            finally:
+                client_socket.close()
+                print(f"Connection with {addr} closed")
 
 if __name__ == "__main__":
     start_server()
