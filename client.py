@@ -30,8 +30,8 @@ class SocketClient():
       except Exception as e:
           
           print(f"エラーが発生しました:{e}") # エラーが発生した場合の処理
-            
-    
-    
-                
-                
+          
+          
+if __name__ == '__main__':
+    client = SocketClient(IP,PORT)
+    client.send_video('test.mp4')
