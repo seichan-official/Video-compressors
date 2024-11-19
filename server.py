@@ -3,7 +3,7 @@ import socket
 def start_server():
     IP = '127.0.0.1'  # IP to listen on
     PORT = 8000       # Port to listen on
-    BUFFER_SIZE = 1400  # Buffer size for receiving data
+    BUFFER_SIZE = 14000  # Buffer size for receiving data
     TIMEOUT = 60       # Client timeout in seconds
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Create a TCP socket
